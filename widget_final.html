@@ -1,0 +1,665 @@
+<title>Будь Здоров · Одеса</title>
+<style>
+  :root{
+    --bg: #fbfbfa;
+    --paper: #ffffff;
+    --ink: #111111;
+    --ink-soft: #6b6b6b;
+    --ink-faint: #a3a3a1;
+    --line: #e2e0dc;
+    --line-strong: #cfccc6;
+    --active-bg: #77AB47;
+    --active-ink: #ffffff;
+    --danger: #b3261e;
+    --radius: 14px;
+    --radius-sm: 10px;
+    --font: "Helvetica Neue", Helvetica, Arial, sans-serif;
+  }
+
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;}
+  body{
+    background: var(--bg);
+    color: var(--ink);
+    font-family: var(--font);
+    -webkit-font-smoothing: antialiased;
+    line-height: 1.4;
+  }
+
+  .wrap{
+    max-width: 1180px;
+    margin: 0 auto;
+    padding: 56px 24px 80px;
+  }
+
+  h1{
+    font-size: clamp(26px, 3.4vw, 34px);
+    font-weight: 700;
+    letter-spacing: -0.01em;
+    margin: 0 0 8px;
+    text-wrap: balance;
+  }
+  .sub{
+    color: var(--ink-soft);
+    font-size: 15px;
+    margin: 0 0 40px;
+    max-width: 56ch;
+  }
+
+  .layout{
+    display: grid;
+    grid-template-columns: 1fr 340px;
+    gap: 56px;
+    align-items: start;
+  }
+  @media (max-width: 860px){
+    .layout{ grid-template-columns: 1fr; gap: 40px; }
+  }
+
+  .step{
+    margin-bottom: 40px;
+  }
+  .step:last-child{ margin-bottom: 0; }
+  .step-head{
+    display:flex;
+    align-items: baseline;
+    gap: 10px;
+    margin-bottom: 16px;
+  }
+  .step-num{
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    color: var(--ink-faint);
+  }
+  .step-title{
+    font-size: 15px;
+    font-weight: 700;
+    letter-spacing: 0.01em;
+  }
+  .step-hint{
+    font-size: 12px;
+    color: var(--ink-faint);
+  }
+
+  /* Diet + program cards */
+  .card-grid{
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 10px;
+  }
+  @media (max-width: 640px){
+    .card-grid{ grid-template-columns: repeat(2, 1fr); }
+  }
+
+  .opt-card{
+    position: relative;
+    text-align: left;
+    background: var(--paper);
+    border: 1px solid var(--line-strong);
+    border-radius: var(--radius-sm);
+    padding: 16px 14px;
+    cursor: pointer;
+    font-family: inherit;
+    color: var(--ink);
+    transition: border-color .15s ease, background .15s ease, color .15s ease;
+  }
+  .opt-card:hover{ border-color: var(--ink); }
+  .opt-card:focus-visible{ outline: 2px solid var(--ink); outline-offset: 2px; }
+  .opt-card .name{
+    font-weight: 700;
+    font-size: 14px;
+    margin-bottom: 4px;
+  }
+  .opt-card .meta{
+    font-size: 12px;
+    color: var(--ink-soft);
+  }
+  .opt-card.active{
+    background: var(--active-bg);
+    border-color: var(--active-bg);
+    color: var(--active-ink);
+  }
+  .opt-card.active .meta{ color: #c9c9c9; }
+  .opt-card.disabled{
+    opacity: 0.35;
+    cursor: not-allowed;
+  }
+  .opt-card .check{
+    position:absolute;
+    top: 10px; right: 10px;
+    width: 16px; height: 16px;
+    border-radius: 50%;
+    border: 1px solid currentColor;
+    display:flex; align-items:center; justify-content:center;
+  }
+  .opt-card.active .check{ background: var(--active-ink); }
+  .opt-card .check svg{ width: 9px; height:9px; display:none; }
+  .opt-card.active .check svg{ display:block; }
+
+  /* pill rows: calories / days */
+  .pill-row{ display:flex; flex-wrap: wrap; gap: 8px; }
+  .pill{
+    font-family: inherit;
+    background: var(--paper);
+    border: 1px solid var(--line-strong);
+    border-radius: 999px;
+    padding: 10px 18px;
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--ink);
+    cursor: pointer;
+    font-variant-numeric: tabular-nums;
+    transition: border-color .15s ease, background .15s ease, color .15s ease;
+  }
+  .pill:hover{ border-color: var(--ink); }
+  .pill:focus-visible{ outline: 2px solid var(--ink); outline-offset: 2px; }
+  .pill.active{ background: var(--active-bg); border-color: var(--active-bg); color: var(--active-ink); }
+  .pill .sec{ display:block; font-size:10px; font-weight:500; opacity:.7; margin-top:2px; }
+
+  .feature-box{
+    margin-top: 18px;
+    border-left: 2px solid var(--line-strong);
+    padding-left: 14px;
+    font-size: 13px;
+    color: var(--ink-soft);
+    white-space: pre-line;
+    max-width: 62ch;
+  }
+
+  /* summary card */
+  .summary{
+    position: sticky;
+    top: 24px;
+    background: var(--paper);
+    border: 1px solid var(--line-strong);
+    border-radius: var(--radius);
+    padding: 26px 24px;
+  }
+  .summary .eyebrow{
+    font-size: 11px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--ink-faint);
+    margin-bottom: 10px;
+  }
+  .summary .prog-name{
+    font-size: 20px;
+    font-weight: 700;
+    margin-bottom: 2px;
+  }
+  .summary .prog-diet{
+    font-size: 13px;
+    color: var(--ink-soft);
+    margin-bottom: 18px;
+  }
+  .summary dl{
+    margin: 0 0 20px;
+    display: grid;
+    grid-template-columns: 1fr auto;
+    row-gap: 8px;
+    font-size: 13px;
+    border-top: 1px solid var(--line);
+    padding-top: 14px;
+  }
+  .summary dt{ color: var(--ink-soft); }
+  .summary dd{ margin:0; text-align:right; font-weight: 600; font-variant-numeric: tabular-nums; }
+
+  .summary .price-line{
+    border-top: 1px solid var(--line);
+    padding-top: 16px;
+    margin-bottom: 20px;
+  }
+  .summary .price-label{ font-size: 13px; color: var(--ink-soft); display:block; margin-bottom: 4px; }
+  .summary .price-figures{
+    display:flex;
+    align-items: baseline;
+    gap: 10px;
+    flex-wrap: wrap;
+  }
+  .price-old{
+    font-size: 16px;
+    font-weight: 600;
+    color: var(--ink-faint);
+    text-decoration: line-through;
+    font-variant-numeric: tabular-nums;
+  }
+  .summary .price-value{
+    font-size: 30px;
+    font-weight: 700;
+    font-variant-numeric: tabular-nums;
+    letter-spacing: -0.01em;
+    color: var(--active-bg);
+  }
+  .summary .price-value .cur{ font-size: 16px; font-weight: 600; margin-left: 2px; }
+  .discount-badge{
+    display:none;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.02em;
+    color: #fff;
+    background: var(--active-bg);
+    border-radius: 999px;
+    padding: 3px 9px;
+  }
+  .discount-badge.show{ display:inline-block; }
+
+  .btn-primary{
+    display:block;
+    width: 100%;
+    background: var(--active-bg);
+    color: var(--active-ink);
+    border: 1px solid var(--active-bg);
+    border-radius: var(--radius-sm);
+    font-family: inherit;
+    font-size: 14px;
+    font-weight: 700;
+    letter-spacing: 0.02em;
+    text-transform: uppercase;
+    padding: 15px 16px;
+    cursor: pointer;
+    transition: opacity .15s ease;
+  }
+  .btn-primary:hover{ opacity: 0.82; }
+  .btn-primary:disabled{
+    background: var(--paper);
+    color: var(--ink-faint);
+    border-color: var(--line-strong);
+    cursor: not-allowed;
+  }
+  .btn-primary:focus-visible{ outline: 2px solid var(--ink); outline-offset: 3px; }
+
+  .reset{
+    display:block;
+    width: 100%;
+    text-align:center;
+    background: none;
+    border: none;
+    font-family: inherit;
+    font-size: 11px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--ink-faint);
+    padding-top: 12px;
+    cursor: pointer;
+  }
+  .reset:hover{ color: var(--ink); }
+
+  /* modal */
+  .modal-veil{
+    position: fixed; inset: 0;
+    background: rgba(17,17,17,0.5);
+    display: none;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    z-index: 50;
+  }
+  .modal-veil.open{ display:flex; }
+  .modal{
+    background: var(--paper);
+    max-width: 440px;
+    width: 100%;
+    padding: 32px 28px 28px;
+    position: relative;
+    border: 1px solid var(--active-bg);
+    border-radius: var(--radius);
+  }
+  .modal-close{
+    position: absolute;
+    top: 14px; right: 14px;
+    width: 28px; height: 28px;
+    border: none;
+    background: none;
+    font-family: inherit;
+    font-size: 18px;
+    line-height: 1;
+    cursor: pointer;
+    color: var(--ink-soft);
+  }
+  .modal-close:hover{ color: var(--ink); }
+  .modal .check-icon{
+    width: 40px; height: 40px;
+    border-radius: 50%;
+    background: var(--active-bg);
+    color: #fff;
+    display:flex; align-items:center; justify-content:center;
+    margin-bottom: 18px;
+  }
+  .modal h2{
+    font-size: 20px;
+    margin: 0 0 6px;
+    font-weight: 700;
+  }
+  .modal .modal-sub{
+    font-size: 13px;
+    color: var(--ink-soft);
+    margin: 0 0 22px;
+  }
+  .modal dl{
+    margin: 0 0 22px;
+    display: grid;
+    grid-template-columns: 1fr auto;
+    row-gap: 9px;
+    font-size: 13px;
+    border-top: 1px solid var(--line);
+    border-bottom: 1px solid var(--line);
+    padding: 16px 0;
+  }
+  .modal dt{ color: var(--ink-soft); }
+  .modal dd{ margin:0; text-align:right; font-weight:600; font-variant-numeric: tabular-nums; }
+  .modal .modal-total{
+    display:flex; justify-content:space-between; align-items:baseline; gap: 10px;
+    margin-bottom: 22px;
+  }
+  .modal .modal-total .lbl{ font-size:13px; color:var(--ink-soft); }
+  .modal .modal-total .val-wrap{ display:flex; align-items:baseline; gap:8px; }
+  .modal .modal-total .val{ font-size:22px; font-weight:700; font-variant-numeric: tabular-nums; color: var(--active-bg); }
+  .modal-note{
+    font-size: 11px;
+    color: var(--ink-faint);
+    margin-top: 14px;
+    border-top: 1px dashed var(--line-strong);
+    padding-top: 12px;
+  }
+
+  .footnote{
+    margin-top: 56px;
+    padding-top: 18px;
+    border-top: 1px solid var(--line);
+    font-size: 11px;
+    color: var(--ink-faint);
+    max-width: 70ch;
+  }
+
+  @media (prefers-reduced-motion: reduce){
+    *{ transition: none !important; }
+  }
+</style>
+
+<div class="wrap">
+  <h1>Оберіть свою програму харчування</h1>
+  <p class="sub">Розрахуйте раціон і вартість — крок за кроком: тип раціону, програма, калорійність та кількість днів доставки.</p>
+
+  <div class="layout">
+    <div class="steps">
+
+      <div class="step">
+        <div class="step-head">
+          <span class="step-num">КРОК 1</span>
+          <span class="step-title">Тип раціону</span>
+        </div>
+        <div class="card-grid" id="dietGrid"></div>
+      </div>
+
+      <div class="step">
+        <div class="step-head">
+          <span class="step-num">КРОК 2</span>
+          <span class="step-title">Калорійність</span>
+          <span class="step-hint" id="kcalHint"></span>
+        </div>
+        <div class="pill-row" id="kcalRow"></div>
+        <div class="feature-box" id="featureBox" hidden></div>
+      </div>
+
+      <div class="step">
+        <div class="step-head">
+          <span class="step-num">КРОК 3</span>
+          <span class="step-title">Кількість днів доставки</span>
+        </div>
+        <div class="pill-row" id="daysRow"></div>
+      </div>
+
+    </div>
+
+    <div class="summary">
+      <div class="eyebrow">Ваша програма</div>
+      <div class="prog-name" id="sumProgName">—</div>
+      <div class="prog-diet" id="sumDiet">Оберіть параметри ліворуч</div>
+      <dl>
+        <dt>Калорійність</dt><dd id="sumKcal">—</dd>
+        <dt>Днів доставки</dt><dd id="sumDays">—</dd>
+        <dt>Ціна за день</dt><dd id="sumPerDay">—</dd>
+      </dl>
+      <div class="price-line">
+        <span class="price-label">Разом <span class="discount-badge" id="discountBadge">Знижка</span></span>
+        <div class="price-figures">
+          <span class="price-old" id="sumTotalOld"></span>
+          <span class="price-value" id="sumTotal">— <span class="cur">грн</span></span>
+        </div>
+      </div>
+      <button class="btn-primary" id="orderBtn" disabled>Оформити замовлення</button>
+      <button class="reset" id="resetBtn">Скинути параметри</button>
+    </div>
+  </div>
+
+  <p class="footnote">Прототип віджета для вбудовування на bz.od.ua (Одеса). Вікно підтвердження замовлення — орієнтовний варіант, буде уточнено під референс.</p>
+</div>
+
+<div class="modal-veil" id="modalVeil">
+  <div class="modal" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+    <button class="modal-close" id="modalClose" aria-label="Закрити">&times;</button>
+    <div class="check-icon">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M4 12.5L9.5 18L20 6" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    </div>
+    <h2 id="modalTitle">Ваше замовлення</h2>
+    <p class="modal-sub">Перевірте параметри — наш менеджер зв'яжеться для підтвердження.</p>
+    <dl>
+      <dt>Раціон</dt><dd id="mDiet">—</dd>
+      <dt>Програма</dt><dd id="mProg">—</dd>
+      <dt>Калорійність</dt><dd id="mKcal">—</dd>
+      <dt>Днів доставки</dt><dd id="mDays">—</dd>
+    </dl>
+    <div class="modal-total">
+      <span class="lbl">Разом до сплати</span>
+      <span class="val-wrap">
+        <span class="price-old" id="mTotalOld"></span>
+        <span class="val" id="mTotal">—</span>
+      </span>
+    </div>
+    <button class="btn-primary" id="modalConfirm">Підтвердити замовлення</button>
+    <p class="modal-note">Це чернетка вікна — надішліть, будь ласка, скрін бажаного дизайну, і ми повторимо точну структуру та текст.</p>
+  </div>
+</div>
+
+<script>
+  const PRICE_DATA = [{"diet": "Базовий", "family": "SLIM", "kcal": 900, "days": "1", "price": 650}, {"diet": "Базовий", "family": "SLIM", "kcal": 900, "days": "2-9", "price": 630}, {"diet": "Базовий", "family": "SLIM", "kcal": 900, "days": "10-29", "price": 610}, {"diet": "Базовий", "family": "SLIM", "kcal": 900, "days": "30", "price": 600}, {"diet": "Базовий", "family": "SLIM", "kcal": 1200, "days": "1", "price": 760}, {"diet": "Базовий", "family": "SLIM", "kcal": 1200, "days": "2-9", "price": 710}, {"diet": "Базовий", "family": "SLIM", "kcal": 1200, "days": "10-29", "price": 700}, {"diet": "Базовий", "family": "SLIM", "kcal": 1200, "days": "30", "price": 680}, {"diet": "Базовий", "family": "BALANCE", "kcal": 1500, "days": "1", "price": 860}, {"diet": "Базовий", "family": "BALANCE", "kcal": 1500, "days": "2-9", "price": 830}, {"diet": "Базовий", "family": "BALANCE", "kcal": 1500, "days": "10-29", "price": 810}, {"diet": "Базовий", "family": "BALANCE", "kcal": 1500, "days": "30", "price": 790}, {"diet": "Базовий", "family": "BALANCE", "kcal": 2000, "days": "1", "price": 910}, {"diet": "Базовий", "family": "BALANCE", "kcal": 2000, "days": "2-9", "price": 900}, {"diet": "Базовий", "family": "BALANCE", "kcal": 2000, "days": "10-29", "price": 890}, {"diet": "Базовий", "family": "BALANCE", "kcal": 2000, "days": "30", "price": 870}, {"diet": "Базовий", "family": "POWER", "kcal": 2500, "days": "1", "price": 980}, {"diet": "Базовий", "family": "POWER", "kcal": 2500, "days": "2-9", "price": 960}, {"diet": "Базовий", "family": "POWER", "kcal": 2500, "days": "10-29", "price": 930}, {"diet": "Базовий", "family": "POWER", "kcal": 2500, "days": "30", "price": 900}, {"diet": "Базовий", "family": "POWER", "kcal": 3000, "days": "1", "price": 1090}, {"diet": "Базовий", "family": "POWER", "kcal": 3000, "days": "2-9", "price": 1060}, {"diet": "Базовий", "family": "POWER", "kcal": 3000, "days": "10-29", "price": 1050}, {"diet": "Базовий", "family": "POWER", "kcal": 3000, "days": "30", "price": 1020}, {"diet": "Без глютену", "family": "SLIM", "kcal": 900, "days": "1", "price": 695}, {"diet": "Без глютену", "family": "SLIM", "kcal": 900, "days": "2-9", "price": 680}, {"diet": "Без глютену", "family": "SLIM", "kcal": 900, "days": "10-29", "price": 660}, {"diet": "Без глютену", "family": "SLIM", "kcal": 900, "days": "30", "price": 640}, {"diet": "Без глютену", "family": "SLIM", "kcal": 1200, "days": "1", "price": 820}, {"diet": "Без глютену", "family": "SLIM", "kcal": 1200, "days": "2-9", "price": 760}, {"diet": "Без глютену", "family": "SLIM", "kcal": 1200, "days": "10-29", "price": 750}, {"diet": "Без глютену", "family": "SLIM", "kcal": 1200, "days": "30", "price": 730}, {"diet": "Без глютену", "family": "BALANCE", "kcal": 1500, "days": "1", "price": 920}, {"diet": "Без глютену", "family": "BALANCE", "kcal": 1500, "days": "2-9", "price": 890}, {"diet": "Без глютену", "family": "BALANCE", "kcal": 1500, "days": "10-29", "price": 870}, {"diet": "Без глютену", "family": "BALANCE", "kcal": 1500, "days": "30", "price": 845}, {"diet": "Без глютену", "family": "BALANCE", "kcal": 2000, "days": "1", "price": 980}, {"diet": "Без глютену", "family": "BALANCE", "kcal": 2000, "days": "2-9", "price": 970}, {"diet": "Без глютену", "family": "BALANCE", "kcal": 2000, "days": "10-29", "price": 960}, {"diet": "Без глютену", "family": "BALANCE", "kcal": 2000, "days": "30", "price": 930}, {"diet": "Без глютену", "family": "POWER", "kcal": 2500, "days": "1", "price": 1050}, {"diet": "Без глютену", "family": "POWER", "kcal": 2500, "days": "2-9", "price": 1030}, {"diet": "Без глютену", "family": "POWER", "kcal": 2500, "days": "10-29", "price": 1000}, {"diet": "Без глютену", "family": "POWER", "kcal": 2500, "days": "30", "price": 970}, {"diet": "Без глютену", "family": "POWER", "kcal": 3000, "days": "1", "price": 1170}, {"diet": "Без глютену", "family": "POWER", "kcal": 3000, "days": "2-9", "price": 1140}, {"diet": "Без глютену", "family": "POWER", "kcal": 3000, "days": "10-29", "price": 1130}, {"diet": "Без глютену", "family": "POWER", "kcal": 3000, "days": "30", "price": 1100}, {"diet": "Без лактози", "family": "SLIM", "kcal": 900, "days": "1", "price": 690}, {"diet": "Без лактози", "family": "SLIM", "kcal": 900, "days": "2-9", "price": 670}, {"diet": "Без лактози", "family": "SLIM", "kcal": 900, "days": "10-29", "price": 650}, {"diet": "Без лактози", "family": "SLIM", "kcal": 900, "days": "30", "price": 630}, {"diet": "Без лактози", "family": "SLIM", "kcal": 1200, "days": "1", "price": 780}, {"diet": "Без лактози", "family": "SLIM", "kcal": 1200, "days": "2-9", "price": 750}, {"diet": "Без лактози", "family": "SLIM", "kcal": 1200, "days": "10-29", "price": 740}, {"diet": "Без лактози", "family": "SLIM", "kcal": 1200, "days": "30", "price": 720}, {"diet": "Без лактози", "family": "BALANCE", "kcal": 1500, "days": "1", "price": 910}, {"diet": "Без лактози", "family": "BALANCE", "kcal": 1500, "days": "2-9", "price": 870}, {"diet": "Без лактози", "family": "BALANCE", "kcal": 1500, "days": "10-29", "price": 850}, {"diet": "Без лактози", "family": "BALANCE", "kcal": 1500, "days": "30", "price": 830}, {"diet": "Без лактози", "family": "BALANCE", "kcal": 2000, "days": "1", "price": 955}, {"diet": "Без лактози", "family": "BALANCE", "kcal": 2000, "days": "2-9", "price": 945}, {"diet": "Без лактози", "family": "BALANCE", "kcal": 2000, "days": "10-29", "price": 930}, {"diet": "Без лактози", "family": "BALANCE", "kcal": 2000, "days": "30", "price": 920}, {"diet": "Без лактози", "family": "POWER", "kcal": 2500, "days": "1", "price": 1030}, {"diet": "Без лактози", "family": "POWER", "kcal": 2500, "days": "2-9", "price": 1010}, {"diet": "Без лактози", "family": "POWER", "kcal": 2500, "days": "10-29", "price": 980}, {"diet": "Без лактози", "family": "POWER", "kcal": 2500, "days": "30", "price": 950}, {"diet": "Без лактози", "family": "POWER", "kcal": 3000, "days": "1", "price": 1150}, {"diet": "Без лактози", "family": "POWER", "kcal": 3000, "days": "2-9", "price": 1120}, {"diet": "Без лактози", "family": "POWER", "kcal": 3000, "days": "10-29", "price": 1100}, {"diet": "Без лактози", "family": "POWER", "kcal": 3000, "days": "30", "price": 1070}, {"diet": "High Protein", "family": "SLIM", "kcal": 1200, "days": "1", "price": 840}, {"diet": "High Protein", "family": "SLIM", "kcal": 1200, "days": "2-9", "price": 780}, {"diet": "High Protein", "family": "SLIM", "kcal": 1200, "days": "10-29", "price": 770}, {"diet": "High Protein", "family": "SLIM", "kcal": 1200, "days": "30", "price": 750}, {"diet": "High Protein", "family": "BALANCE", "kcal": 1500, "days": "1", "price": 950}, {"diet": "High Protein", "family": "BALANCE", "kcal": 1500, "days": "2-9", "price": 915}, {"diet": "High Protein", "family": "BALANCE", "kcal": 1500, "days": "10-29", "price": 890}, {"diet": "High Protein", "family": "BALANCE", "kcal": 1500, "days": "30", "price": 870}, {"diet": "High Protein", "family": "BALANCE", "kcal": 2000, "days": "1", "price": 1000}, {"diet": "High Protein", "family": "BALANCE", "kcal": 2000, "days": "2-9", "price": 990}, {"diet": "High Protein", "family": "BALANCE", "kcal": 2000, "days": "10-29", "price": 980}, {"diet": "High Protein", "family": "BALANCE", "kcal": 2000, "days": "30", "price": 960}, {"diet": "High Protein", "family": "POWER", "kcal": 2500, "days": "1", "price": 1080}, {"diet": "High Protein", "family": "POWER", "kcal": 2500, "days": "2-9", "price": 1060}, {"diet": "High Protein", "family": "POWER", "kcal": 2500, "days": "10-29", "price": 1030}, {"diet": "High Protein", "family": "POWER", "kcal": 2500, "days": "30", "price": 990}];
+  const COMMENTS = {"Базовий|SLIM|900": "Особливості раціону: Швидке зниження ваги; 3 страви на день; Калорійність – 900 ккал; Результат: швидке зниження ваги", "Базовий|SLIM|1200": "Особливості раціону: \nшвидке зниження ваги;\nточний підрахунок КБЖВ\nкалорійність – 1200 ккал.\nРезультат:\nзниження  ваги", "Базовий|BALANCE|1500": "Особливості раціону:\nвисока швидкість обміну речовин; \nзниження відчуття голода;\nкалорійність – 1500 ккал.\nРезультат: \n зниження маси тіла для чоловіків та утримання  для жінок", "Базовий|BALANCE|2000": "Особливості раціону:\nоптимальне співвідношення \nбілків, жирів та вуглеводів;\nРезультат:\nутримання ваги;\nпокращення самовідчуття;\nнормалізація обміну речовин\n утримання маси тіла для чоловіків та набор для жінок", "Базовий|POWER|2500": "Особливості раціону:\nоптимальне співвідношення \nбілків, жирів та вуглеводів;\nрозрахований для спортсменів та атлетів-початківців\nРезультат:\nефективний набір м'язової маси", "Базовий|POWER|3000": "Особливості раціону:\nоптимальне співвідношення \nбілків, жирів та вуглеводів;\nрозрахований для спортсменів та атлетів-початківців\nРезультат:\nефективний набір м'язової маси", "Без глютену|SLIM|900": "Особливості раціону:\nШвидке зниження ваги; \n3 страви на день;\nКалорійність – 900 ккал.\nРезультат: швидке зниження ваги", "Без глютену|SLIM|1200": "Особливості раціону: \nшвидке зниження ваги;\nточний підрахунок КБЖВ\nкалорійність – 1200 ккал.\nРезультат:\nзниження  ваги", "Без глютену|BALANCE|1500": "Особливості раціону:\nвисока швидкість обміну речовин; \nзниження відчуття голода;\nкалорійність – 1500 ккал.\nРезультат: \n зниження маси тіла для чоловіків та утримання  для жінок", "Без глютену|BALANCE|2000": "Особливості раціону:\nоптимальне співвідношення \nбілків, жирів та вуглеводів;\nРезультат:\nутримання ваги;\nпокращення самовідчуття;\nнормалізація обміну речовин\n утримання маси тіла для чоловіків та набор для жінок", "Без глютену|POWER|2500": "Особливості раціону:\nоптимальне співвідношення \nбілків, жирів та вуглеводів;\nрозрахований для спортсменів та атлетів-початківців\nРезультат:\nефективний набір м'язової маси", "Без глютену|POWER|3000": "Особливості раціону:\nоптимальне співвідношення \nбілків, жирів та вуглеводів;\nрозрахований для спортсменів та атлетів-початківців\nРезультат:\nефективний набір м'язової маси", "Без лактози|SLIM|900": "Особливості раціону:\nШвидке зниження ваги; \n3 страви на день;\nКалорійність – 900 ккал.\nРезультат: швидке зниження ваги", "Без лактози|SLIM|1200": "Особливості раціону: \nшвидке зниження ваги;\nточний підрахунок КБЖВ\nкалорійність – 1200 ккал.\nРезультат:\nзниження  ваги", "Без лактози|BALANCE|1500": "Особливості раціону:\nвисока швидкість обміну речовин; \nзниження відчуття голода;\nкалорійність – 1500 ккал.\nРезультат: \n зниження маси тіла для чоловіків та утримання  для жінок", "Без лактози|BALANCE|2000": "Особливості раціону:\nоптимальне співвідношення \nбілків, жирів та вуглеводів;\nРезультат:\nутримання ваги;\nпокращення самовідчуття;\nнормалізація обміну речовин\n утримання маси тіла для чоловіків та набор для жінок", "Без лактози|POWER|2500": "Особливості раціону:\nоптимальне співвідношення \nбілків, жирів та вуглеводів;\nрозрахований для спортсменів та атлетів-початківців\nРезультат:\nефективний набір м'язової массы", "Без лактози|POWER|3000": "Особливості раціону:\nоптимальне співвідношення \nбілків, жирів та вуглеводів;\nрозрахований для спортсменів та атлетів-початківців\nРезультат:\nефективний набір м'язової массы", "High Protein|SLIM|1200": "Особливості раціону: \nГарантована щоденна кількість білка-100г;\nточний підрахунок КБЖВ\nкалорійність – 1200-1400 ккал.\nРезультат:\nзниження  ваги", "High Protein|BALANCE|1500": "Особливості раціону:\nГарантована щоденна кількість білка 130г; \nзниження відчуття голода;\nкалорійність – 1500-1800 ккал.\nРезультат: \n зниження маси тіла для чоловіків та утримання  для жінок", "High Protein|BALANCE|2000": "Особливості раціону:\nГарантована щоденна кількість білка-160г \nкалорійність – 2000-2300ккал\nРезультат:\nутримання ваги;\nпокращення самовідчуття;\nнормалізація обміну речовин\n утримання маси тіла для чоловіків та набор для жінок", "High Protein|POWER|2500": "Особливості раціону:\nарантована щоденна кількість білка-200г \nрозрахований для спортсменів та атлетів-початківців\nРезультат:\nефективний набір м'язової массы"};
+
+  const DIET_LABELS = {
+    "Базовий": "Базові раціони з підрахунком КБЖВ",
+    "High Protein": "High Protein",
+    "Без глютену": "Без глютену",
+    "Без лактози": "Без лактози"
+  };
+  const DIET_ORDER = ["Базовий", "High Protein", "Без глютену", "Без лактози"];
+
+  const PROGRAM_LABELS = {
+    SLIM: { title: "SLIM", meta: "Схуднення" },
+    BALANCE: { title: "BALANCE", meta: "Утримання ваги" },
+    POWER: { title: "POWER", meta: "Набір маси" }
+  };
+
+  const DAY_OPTIONS = [
+    { label: "1", value: 1, tier: "1" },
+    { label: "5", value: 5, tier: "2-9" },
+    { label: "7", value: 7, tier: "2-9" },
+    { label: "10", value: 10, tier: "10-29" },
+    { label: "14", value: 14, tier: "10-29" },
+    { label: "30", value: 30, tier: "30" }
+  ];
+
+  // Build lookup: diet -> family -> [kcal...]; diet|family|kcal|tier -> price
+  const byKey = {};
+  const familiesByDiet = {};
+  const kcalByDietFamily = {};
+  PRICE_DATA.forEach(r => {
+    byKey[[r.diet, r.family, r.kcal, r.days].join("|")] = r.price;
+    familiesByDiet[r.diet] = familiesByDiet[r.diet] || new Set();
+    familiesByDiet[r.diet].add(r.family);
+    const fk = [r.diet, r.family].join("|");
+    kcalByDietFamily[fk] = kcalByDietFamily[fk] || new Set();
+    kcalByDietFamily[fk].add(r.kcal);
+  });
+
+  const state = { diet: null, family: null, kcal: null, days: null };
+
+  const dietGrid = document.getElementById("dietGrid");
+  const kcalRow = document.getElementById("kcalRow");
+  const kcalHint = document.getElementById("kcalHint");
+  const daysRow = document.getElementById("daysRow");
+  const featureBox = document.getElementById("featureBox");
+
+  function checkSvg(){
+    return '<svg viewBox="0 0 24 24" fill="none"><path d="M4 12.5L9.5 18L20 6" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+  }
+
+  // Flat, sorted kcal options per diet, each carrying its underlying program family
+  function kcalOptionsFor(diet){
+    const list = [];
+    if (!diet || !familiesByDiet[diet]) return list;
+    familiesByDiet[diet].forEach(fam => {
+      const kcals = kcalByDietFamily[[diet, fam].join("|")] || new Set();
+      kcals.forEach(kcal => list.push({ kcal, family: fam }));
+    });
+    return list.sort((a, b) => a.kcal - b.kcal);
+  }
+
+  function renderDietGrid(){
+    dietGrid.innerHTML = "";
+    DIET_ORDER.forEach(diet => {
+      const btn = document.createElement("button");
+      btn.type = "button";
+      btn.className = "opt-card" + (state.diet === diet ? " active" : "");
+      btn.innerHTML = `<div class="check">${checkSvg()}</div><div class="name">${DIET_LABELS[diet]}</div>`;
+      btn.addEventListener("click", () => {
+        if (state.diet === diet) return;
+        state.diet = diet;
+        state.family = null; state.kcal = null; state.days = null;
+        render();
+      });
+      dietGrid.appendChild(btn);
+    });
+  }
+
+  function renderKcalRow(){
+    kcalRow.innerHTML = "";
+    featureBox.hidden = true;
+    if (!state.diet){
+      kcalHint.textContent = "спочатку оберіть тип раціону";
+      return;
+    }
+    kcalHint.textContent = "";
+    kcalOptionsFor(state.diet).forEach(({ kcal, family }) => {
+      const btn = document.createElement("button");
+      btn.type = "button";
+      btn.className = "pill" + (state.kcal === kcal ? " active" : "");
+      btn.innerHTML = `${kcal}<span class="sec">ккал</span>`;
+      btn.addEventListener("click", () => {
+        state.kcal = kcal;
+        state.family = family;
+        state.days = null;
+        render();
+      });
+      kcalRow.appendChild(btn);
+    });
+    if (state.kcal && state.family){
+      const c = COMMENTS[[state.diet, state.family, state.kcal].join("|")];
+      if (c){
+        featureBox.hidden = false;
+        featureBox.textContent = c;
+      }
+    }
+  }
+
+  function renderDaysRow(){
+    daysRow.innerHTML = "";
+    const active = !!(state.diet && state.family && state.kcal);
+    DAY_OPTIONS.forEach(opt => {
+      const btn = document.createElement("button");
+      btn.type = "button";
+      btn.className = "pill" + (state.days === opt.value ? " active" : "");
+      btn.innerHTML = `${opt.label}<span class="sec">днів</span>`;
+      btn.disabled = !active;
+      if (!active) btn.style.opacity = 0.35;
+      btn.addEventListener("click", () => {
+        state.days = opt.value;
+        render();
+      });
+      daysRow.appendChild(btn);
+    });
+  }
+
+  function basePerDay(){
+    if (!(state.diet && state.family && state.kcal)) return null;
+    return byKey[[state.diet, state.family, state.kcal, "1"].join("|")];
+  }
+
+  function currentPrice(){
+    if (!(state.diet && state.family && state.kcal && state.days)) return null;
+    const tier = DAY_OPTIONS.find(d => d.value === state.days).tier;
+    const perDay = byKey[[state.diet, state.family, state.kcal, tier].join("|")];
+    if (perDay == null) return null;
+    const base = basePerDay();
+    return { perDay, total: perDay * state.days, basePerDay: base, baseTotal: base != null ? base * state.days : null };
+  }
+
+  const fmt = n => n.toLocaleString("uk-UA");
+
+  function renderSummary(){
+    document.getElementById("sumProgName").textContent = state.family ? `${PROGRAM_LABELS[state.family].title}${state.kcal ? " " + state.kcal : ""}` : "—";
+    document.getElementById("sumDiet").textContent = state.diet ? DIET_LABELS[state.diet] : "Оберіть параметри ліворуч";
+    document.getElementById("sumKcal").textContent = state.kcal ? `${state.kcal} ккал` : "—";
+    document.getElementById("sumDays").textContent = state.days ? `${state.days} дн.` : "—";
+
+    const p = currentPrice();
+    const hasDiscount = !!(p && p.basePerDay != null && p.basePerDay !== p.perDay);
+
+    document.getElementById("sumPerDay").textContent = p
+      ? (hasDiscount ? `${p.basePerDay} → ${p.perDay} грн` : `${p.perDay} грн`)
+      : "—";
+
+    const totalEl = document.getElementById("sumTotal");
+    const totalOldEl = document.getElementById("sumTotalOld");
+    totalEl.innerHTML = p ? `${fmt(p.total)} <span class="cur">грн</span>` : `— <span class="cur">грн</span>`;
+    totalOldEl.textContent = hasDiscount ? `${fmt(p.baseTotal)} грн` : "";
+    document.getElementById("discountBadge").classList.toggle("show", hasDiscount);
+
+    document.getElementById("orderBtn").disabled = !p;
+  }
+
+  function render(){
+    renderDietGrid();
+    renderKcalRow();
+    renderDaysRow();
+    renderSummary();
+  }
+
+  document.getElementById("resetBtn").addEventListener("click", () => {
+    state.diet = null; state.family = null; state.kcal = null; state.days = null;
+    render();
+  });
+
+  // Modal
+  const veil = document.getElementById("modalVeil");
+  document.getElementById("orderBtn").addEventListener("click", () => {
+    const p = currentPrice();
+    if (!p) return;
+    const hasDiscount = p.basePerDay != null && p.basePerDay !== p.perDay;
+    document.getElementById("mDiet").textContent = DIET_LABELS[state.diet];
+    document.getElementById("mProg").textContent = `${PROGRAM_LABELS[state.family].title} ${state.kcal} ккал`;
+    document.getElementById("mKcal").textContent = `${state.kcal} ккал`;
+    document.getElementById("mDays").textContent = `${state.days} дн.`;
+    document.getElementById("mTotal").textContent = `${fmt(p.total)} грн`;
+    document.getElementById("mTotalOld").textContent = hasDiscount ? `${fmt(p.baseTotal)} грн` : "";
+    veil.classList.add("open");
+  });
+  document.getElementById("modalClose").addEventListener("click", () => veil.classList.remove("open"));
+  veil.addEventListener("click", (e) => { if (e.target === veil) veil.classList.remove("open"); });
+  document.getElementById("modalConfirm").addEventListener("click", () => {
+    veil.classList.remove("open");
+  });
+  document.addEventListener("keydown", (e) => { if (e.key === "Escape") veil.classList.remove("open"); });
+
+  render();
+</script>
